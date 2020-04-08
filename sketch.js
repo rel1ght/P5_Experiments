@@ -1,3 +1,198 @@
-function setup() {}
+const CRYSTAL_SIZE = 150;
+const SIDES = 6;
+const REPEATNUM = 5;
+let PALETTE = [];
+const DEFAULT_ANGLE = 360 / 6;
+function setup() {
+	createCanvas(800, 800, SVG);
+	background("black");
+	fill("black");
 
-function draw() {}
+	let light = color("rgb(211, 246, 219");
+	let skyBlue = color("rgb(146, 213, 230)");
+	let purple = color("rgb(119, 45, 139)");
+	let magenta = color("rgb(90, 11, 77)");
+	let green = color("rgb(161, 239, 139)");
+
+	PALETTE = [
+		color("rgba(211, 226, 219, .1"),
+		color("rgba(146, 213, 230, .7)"),
+		color("rgba(119, 45, 139, .7)"),
+		color("rgba(90, 11, 77, .8)"),
+		color("rgba(161, 239, 139, .9)"),
+	];
+	//default is radian, change to degree
+	angleMode(DEGREES);
+	//create rectanges from center, not corner
+	rectMode(CENTER);
+	//no animations, don't need to repeatedly render
+	noLoop();
+}
+
+function draw() {
+	let widthGrid = width / REPEATNUM;
+	let heightGrid = height / REPEATNUM;
+	let x = widthGrid / 2;
+	let y = heightGrid / 2;
+	push();
+	translate(x, y);
+	for (let i = 0; i < REPEATNUM; i++) {
+		push();
+		for (let j = 0; j < REPEATNUM; j++) {
+			console.log("X: ", x);
+			drawShapes();
+			translate(widthGrid, 0);
+			//x += widthGrid;
+		}
+		pop();
+		console.log("Y: ", y);
+		translate(0, heightGrid);
+		//y += heightGrid;
+	}
+	pop();
+}
+function drawShapes() {
+	push();
+	//translate(width / 2, height / 2);
+	rotate(30);
+	outlineShapeMaker();
+	for (let i = 0; i < 10; i++) {
+		shapesMaker(2);
+	}
+	pop();
+}
+
+function scaffold() {
+	noFill();
+	stroke(0);
+
+	//wrapping function calls in push/pop allows changes to be scoped
+	push();
+	stroke(PALETTE[0]);
+	//changes origin point (0,0) to center of canvas
+	translate(width / 2, height / 2);
+
+	ellipse(0, 0, CRYSTAL_SIZE, CRYSTAL_SIZE);
+	stroke(PALETTE[1]);
+	for (let i = 0; i < SIDES; i++) {
+		line(0, 0, 0, CRYSTAL_SIZE / 2);
+		rotate(DEFAULT_ANGLE);
+	}
+	pop();
+}
+function shapeGenerator(
+	strokeColor,
+	fillColor,
+	shapeSelector,
+	shapeSize,
+	shapePosition,
+	shapeModifier,
+	shapeModifier2
+) {
+	push();
+	rectMode(CENTER);
+	ellipseMode(CENTER);
+	translate(0, shapePosition);
+	stroke(strokeColor);
+	fill(fillColor);
+	switch (shapeSelector) {
+		case 0:
+			ellipse(
+				0,
+				0,
+				shapeSize * shapeModifier,
+				shapeSize * shapeModifier2
+			);
+			break;
+		case 1:
+			triangle(
+				0,
+				0,
+				0,
+				shapeSize * shapeModifier,
+				shapeSize * shapeModifier2,
+				0
+			);
+			break;
+		case 2:
+			rect(0, 0, shapeSize * shapeModifier, shapeSize * shapeModifier2);
+			break;
+		case 3:
+			line(0, shapeSize, shapeSize, 0);
+			break;
+		case 4:
+			point(0, 0);
+	}
+	pop();
+}
+
+function hexagon(posX, posY, radius) {
+	const rotAngle = 360 / 6;
+	beginShape();
+	for (let i = 0; i < 6; i++) {
+		const thisVertex = pointOnCircle(posX, posY, radius, i * rotAngle);
+		vertex(thisVertex.x, thisVertex.y);
+	}
+	endShape(CLOSE);
+}
+
+function pointOnCircle(posX, posY, radius, angle) {
+	const x = posX + radius * cos(angle);
+	const y = posY + radius * sin(angle);
+	return createVector(x, y);
+}
+
+function outlineShapeMaker() {
+	const strokeColor = PALETTE[randomGetter(PALETTE.length)];
+	const weight = randomGetter(3);
+	stroke(strokeColor);
+	strokeWeight(weight);
+	const hexagonTrue = randomGetter(2);
+
+	if (hexagonTrue) {
+		hexagon(0, 0, CRYSTAL_SIZE / 2);
+	} else {
+		ellipse(0, 0, CRYSTAL_SIZE, CRYSTAL_SIZE);
+	}
+}
+
+function shapesMaker(range) {
+	let numShapes = SIDES * (randomGetter(range) + 1);
+	let shapesAngle = 360 / numShapes;
+	let strokeColor = PALETTE[randomGetter(PALETTE.length)];
+	let fillColor = PALETTE[randomGetter(PALETTE.length)];
+
+	let shapeSelector = randomGetter(4);
+	let shapeSize = CRYSTAL_SIZE / (3 + randomGetter(2));
+	let shapePosition = randomGetter(CRYSTAL_SIZE / 6);
+	let shapeModifier = randomGetter(2) - 1.5;
+	let shapeModifier2 = randomGetter(2) - 1.5;
+	// console.log("numShapes: ", numShapes);
+	// console.log("shapesAngle: ", shapesAngle);
+	// console.log("strokeColor: ", strokeColor);
+	// console.log("fillColor: ", fillColor);
+	// console.log("shapeSelector: ", shapeSelector);
+	// console.log("shapeSize: ", shapeSize);
+	// console.log("shapePosition: ", shapePosition);
+	// console.log("shapeModifier: ", shapeModifier);
+
+	push();
+	for (let i = 0; i < numShapes; i++) {
+		shapeGenerator(
+			fillColor,
+			fillColor,
+			shapeSelector,
+			shapeSize,
+			shapePosition,
+			shapeModifier,
+			shapeModifier2
+		);
+		rotate(shapesAngle);
+	}
+	pop();
+}
+
+function randomGetter(range) {
+	const rando = floor(random(range));
+	return rando;
+}
