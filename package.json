@@ -1,0 +1,19 @@
+{
+  "name": "p5_experiments",
+  "version": "1.0.0",
+  "description": "Generative Art Practice",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/rel1ght/P5_Experiments.git"
+  },
+  "author": "Tyler Manion",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/rel1ght/P5_Experiments/issues"
+  },
+  "homepage": "https://github.com/rel1ght/P5_Experiments#readme"
+}
