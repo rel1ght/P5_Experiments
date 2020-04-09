@@ -4,6 +4,14 @@ let XREPEATNUM = 3;
 let YREPEATNUM = 5;
 let PALETTE = [];
 const DEFAULT_ANGLE = 360 / 6;
+function windowResized() {
+	console.log("resized!");
+	resizeCanvas(windowWidth, windowHeight);
+	background("black");
+	fill("black");
+	breakpointSize();
+	draw();
+}
 
 function breakpointSize(windowWidth, windowHeight) {
 	if (matchMedia("(min-width: 1400px)").matches) {
@@ -21,14 +29,14 @@ function breakpointSize(windowWidth, windowHeight) {
 }
 
 function setup() {
-	var windowWidth =
-		window.innerWidth ||
-		document.documentElement.clientWidth ||
-		document.body.clientWidth;
-	var windowHeight =
-		window.innerHeight ||
-		document.documentElement.clientHeight ||
-		document.body.clientHeight;
+	// var windowWidth =
+	// 	window.innerWidth ||
+	// 	document.documentElement.clientWidth ||
+	// 	document.body.clientWidth;
+	// var windowHeight =
+	// 	window.innerHeight ||
+	// 	document.documentElement.clientHeight ||
+	// 	document.body.clientHeight;
 	breakpointSize(windowWidth, windowHeight);
 	createCanvas(windowWidth, windowHeight, SVG);
 	background("black");
@@ -84,13 +92,13 @@ function draw() {
 	for (let i = 0; i < YREPEATNUM; i++) {
 		push();
 		for (let j = 0; j < XREPEATNUM; j++) {
-			console.log("X: ", x);
+			//console.log("X: ", x);
 			drawShapes(palette);
 			translate(widthGrid, 0);
 			//x += widthGrid;
 		}
 		pop();
-		console.log("Y: ", y);
+		//console.log("Y: ", y);
 		translate(0, heightGrid);
 		//y += heightGrid;
 	}
