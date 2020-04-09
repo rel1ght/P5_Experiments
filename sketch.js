@@ -1,26 +1,70 @@
-const CRYSTAL_SIZE = 150;
+let CRYSTAL_SIZE = 100;
 const SIDES = 6;
-const REPEATNUM = 5;
+let XREPEATNUM = 3;
+let YREPEATNUM = 5;
 let PALETTE = [];
 const DEFAULT_ANGLE = 360 / 6;
+
+function breakpointSize(windowWidth, windowHeight) {
+	if (matchMedia("(min-width: 1400px)").matches) {
+		XREPEATNUM = 6;
+		CRYSTAL_SIZE = 150;
+		// the viewport is at least 900 pixels wide
+	} else if (matchMedia("(min-width: 1200px)").matches) {
+		XREPEATNUM = 5;
+		CRYSTAL_SIZE = 150;
+		// the viewport is at least 900 pixels wide
+	} else if (matchMedia("(min-width: 900px)").matches) {
+		XREPEATNUM = 4;
+		// the viewport is at least 900 pixels wide
+	}
+}
+
 function setup() {
-	createCanvas(800, 800, SVG);
+	var windowWidth =
+		window.innerWidth ||
+		document.documentElement.clientWidth ||
+		document.body.clientWidth;
+	var windowHeight =
+		window.innerHeight ||
+		document.documentElement.clientHeight ||
+		document.body.clientHeight;
+	breakpointSize(windowWidth, windowHeight);
+	createCanvas(windowWidth, windowHeight, SVG);
 	background("black");
 	fill("black");
 
-	let light = color("rgb(211, 246, 219");
-	let skyBlue = color("rgb(146, 213, 230)");
-	let purple = color("rgb(119, 45, 139)");
-	let magenta = color("rgb(90, 11, 77)");
-	let green = color("rgb(161, 239, 139)");
-
 	PALETTE = [
-		color("rgba(211, 226, 219, .1"),
-		color("rgba(146, 213, 230, .7)"),
-		color("rgba(119, 45, 139, .7)"),
-		color("rgba(90, 11, 77, .8)"),
-		color("rgba(161, 239, 139, .9)"),
+		[
+			color("rgba(211, 226, 219, .1"),
+			color("rgba(146, 213, 230, .7)"),
+			color("rgba(119, 45, 139, .7)"),
+			color("rgba(90, 11, 77, .8)"),
+			color("rgba(161, 239, 139, .9)"),
+		],
+		[
+			color("rgba(87, 77, 104, .7"),
+			color("rgba(163, 133, 96, .7)"),
+			color("rgba(198, 161, 91, .7)"),
+			color("rgba(242, 232, 109, .8)"),
+			color("rgba(211, 223, 184, .9)"),
+		],
+		[
+			color("rgba(133, 255, 158, .7"),
+			color("rgba(32, 181, 32, .7)"),
+			color("rgba(166, 244, 220, .7)"),
+			color("rgba(186, 89, 166, .8)"),
+			color("rgba(100, 63, 193, .7)"),
+		],
+		[
+			color("rgba(175, 36, 36, .6"),
+			color("rgba(33, 118, 255, .7)"),
+			color("rgba(51, 161, 253, .7)"),
+			color("rgba(253, 202, 64, .8)"),
+			color("rgba(247, 152, 36, .7)"),
+		],
 	];
+
 	//default is radian, change to degree
 	angleMode(DEGREES);
 	//create rectanges from center, not corner
@@ -30,17 +74,18 @@ function setup() {
 }
 
 function draw() {
-	let widthGrid = width / REPEATNUM;
-	let heightGrid = height / REPEATNUM;
+	let widthGrid = width / XREPEATNUM;
+	let heightGrid = height / YREPEATNUM;
 	let x = widthGrid / 2;
 	let y = heightGrid / 2;
 	push();
 	translate(x, y);
-	for (let i = 0; i < REPEATNUM; i++) {
+	let palette = PALETTE[randomGetter(PALETTE.length)];
+	for (let i = 0; i < YREPEATNUM; i++) {
 		push();
-		for (let j = 0; j < REPEATNUM; j++) {
+		for (let j = 0; j < XREPEATNUM; j++) {
 			console.log("X: ", x);
-			drawShapes();
+			drawShapes(palette);
 			translate(widthGrid, 0);
 			//x += widthGrid;
 		}
@@ -51,13 +96,14 @@ function draw() {
 	}
 	pop();
 }
-function drawShapes() {
+function drawShapes(palette) {
 	push();
 	//translate(width / 2, height / 2);
 	rotate(30);
-	outlineShapeMaker();
+	outlineShapeMaker(palette);
+
 	for (let i = 0; i < 10; i++) {
-		shapesMaker(2);
+		shapesMaker(3, palette);
 	}
 	pop();
 }
@@ -142,8 +188,8 @@ function pointOnCircle(posX, posY, radius, angle) {
 	return createVector(x, y);
 }
 
-function outlineShapeMaker() {
-	const strokeColor = PALETTE[randomGetter(PALETTE.length)];
+function outlineShapeMaker(palette) {
+	const strokeColor = palette[randomGetter(palette.length)];
 	const weight = randomGetter(3);
 	stroke(strokeColor);
 	strokeWeight(weight);
@@ -156,12 +202,12 @@ function outlineShapeMaker() {
 	}
 }
 
-function shapesMaker(range) {
+function shapesMaker(range, palette) {
 	let numShapes = SIDES * (randomGetter(range) + 1);
 	let shapesAngle = 360 / numShapes;
-	let strokeColor = PALETTE[randomGetter(PALETTE.length)];
-	let fillColor = PALETTE[randomGetter(PALETTE.length)];
 
+	let strokeColor = palette[randomGetter(palette.length)];
+	let fillColor = palette[randomGetter(palette.length)];
 	let shapeSelector = randomGetter(4);
 	let shapeSize = CRYSTAL_SIZE / (3 + randomGetter(2));
 	let shapePosition = randomGetter(CRYSTAL_SIZE / 6);
